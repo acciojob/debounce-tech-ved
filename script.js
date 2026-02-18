@@ -4,22 +4,28 @@ function debounce(callback, delay, immediate = false) {
   return function (...args) {
     const context = this;
 
-    const callNow = immediate && !timer;
+    if (timer) clearTimeout(timer);
 
-    clearTimeout(timer);
+    if (immediate) {
+      const callNow = !timer;
 
-    timer = setTimeout(() => {
-      timer = null;
-      if (!immediate) {
+      timer = setTimeout(() => {
+        timer = null;
+      }, delay);
+
+      if (callNow) {
         callback.apply(context, args);
       }
-    }, delay);
-
-    if (callNow) {
-      callback.apply(context, args);
+    } else {
+      timer = setTimeout(() => {
+        callback.apply(context, args);
+      }, delay);
     }
   };
 }
+
+module.exports = debounce;
+
 
   
   module.exports = debounce;
